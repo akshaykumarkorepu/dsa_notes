@@ -42,6 +42,8 @@ We need to find:
 
 > Total number of distinct ways to reach stair `n`
 
+Order matters.
+
 ---
 
 ## 📌 Example
@@ -87,7 +89,7 @@ LAST MOVE
 
 ---
 
-# 🔁 Recurrence Relation
+# 🔁 Core Recurrence Relation
 
 To reach stair `n`:
 - either come from `n-1`
@@ -118,7 +120,7 @@ f(1) = 1
 
 ---
 
-## 💡 Why is f(0) = 1 ?
+## 💡 Why is `f(0) = 1` ?
 
 Because:
 
@@ -126,7 +128,48 @@ Because:
 Doing nothing is also one valid way
 ```
 
-This is a very common interview confusion.
+This is one of the most common interview confusions.
+
+---
+
+# 🧠 How To Derive The Recurrence
+
+This is the MOST important DP skill.
+
+Ask:
+
+> “How could I reach stair n?”
+
+To stand at stair `n`:
+
+- last jump could come from `n-1`
+- last jump could come from `n-2`
+
+So total ways become:
+
+```text
+ways reaching (n-1)
++
+ways reaching (n-2)
+```
+
+Hence:
+
+```text
+f(n) = f(n-1) + f(n-2)
+```
+
+---
+
+# 🔥 Golden DP Rule
+
+For counting problems:
+
+```text
+Current answer
+=
+sum of all valid previous states
+```
 
 ---
 
@@ -136,7 +179,7 @@ This is a very common interview confusion.
 
 ---
 
-## 💡 Intuition
+# 💡 Recursion Idea
 
 Ask:
 
@@ -150,7 +193,7 @@ So recursively calculate both.
 
 ---
 
-## 💻 Code
+# 💻 Code
 
 ```cpp
 class Solution {
@@ -169,7 +212,7 @@ public:
 
 ---
 
-## 🌳 Recursive Tree
+# 🌳 Recursive Tree
 
 ```text
 f(4)
@@ -188,24 +231,46 @@ f(4)
 
 ---
 
-## ⚠️ Problem
+# ⚠️ Problem With Recursion
 
 Repeated states:
 - `f(2)`
 
-This creates overlapping subproblems.
+This creates:
+
+```text
+OVERLAPPING SUBPROBLEMS
+```
+
+Which makes recursion slow.
 
 ---
 
-## 🌳 Dry Run
+# 🌳 Dry Run
+
+Input:
+
+```text
+n = 4
+```
+
+Calls:
 
 ```text
 f(4)
 = f(3) + f(2)
+```
 
+Now:
+
+```text
 f(3)
 = f(2) + f(1)
+```
 
+Now:
+
+```text
 f(2)
 = f(1) + f(0)
 ```
@@ -217,20 +282,39 @@ f(1) = 1
 f(0) = 1
 ```
 
+Now:
+
+```text
+f(2) = 2
+f(3) = 3
+f(4) = 5
+```
+
 Final Answer:
 
 ```text
-f(4) = 5
+5
 ```
 
 ---
 
-## ⏱️ Complexity Analysis
+# ⏱️ Complexity Analysis
 
-| Complexity | Value |
-|-----------|-------|
-| Time Complexity | O(2^n) |
-| Space Complexity | O(n) |
+## 🕒 Time Complexity
+
+```text
+O(2^n)
+```
+
+---
+
+## 💾 Space Complexity
+
+```text
+O(n)
+```
+
+(recursion stack)
 
 ---
 
@@ -240,7 +324,7 @@ f(4) = 5
 
 ---
 
-## 💡 Key Idea
+# 💡 Memoization Idea
 
 Store already computed answers.
 
@@ -251,15 +335,18 @@ dp[n] = number of ways to reach stair n
 Before solving:
 - check if answer already exists
 
+If yes:
+- directly return stored answer
+
 ---
 
-## 🎯 Important Interview Line
+# 🎯 Important Interview Line
 
 > "We are caching overlapping subproblems."
 
 ---
 
-## 💻 Code
+# 💻 Code
 
 ```cpp
 class Solution {
@@ -292,7 +379,7 @@ public:
 
 ---
 
-## 📌 Important Memoization Line
+# 📌 Most Important Memoization Line
 
 ```cpp
 if(dp[n] != -1)
@@ -310,9 +397,17 @@ This avoids repeated recursion.
 
 ---
 
-## 🌳 Dry Run
+# 🌳 Memoization Dry Run
 
-### Initial DP Array
+Input:
+
+```text
+n = 4
+```
+
+---
+
+## Initial DP Array
 
 ```text
 [-1,-1,-1,-1,-1]
@@ -320,7 +415,15 @@ This avoids repeated recursion.
 
 ---
 
-### After Calculating dp[2]
+## Calculate `dp[2]`
+
+```text
+dp[2] = solve(1) + solve(0)
+       = 1 + 1
+       = 2
+```
+
+Array:
 
 ```text
 [-1,-1,2,-1,-1]
@@ -328,7 +431,15 @@ This avoids repeated recursion.
 
 ---
 
-### After Calculating dp[3]
+## Calculate `dp[3]`
+
+```text
+dp[3] = solve(2) + solve(1)
+       = 2 + 1
+       = 3
+```
+
+Array:
 
 ```text
 [-1,-1,2,3,-1]
@@ -336,7 +447,33 @@ This avoids repeated recursion.
 
 ---
 
-### Final DP Array
+## Now `solve(2)` Comes Again
+
+But:
+
+```text
+dp[2] already exists
+```
+
+So:
+
+```cpp
+return dp[2];
+```
+
+No recursion happens.
+
+This is the optimization.
+
+---
+
+## Final
+
+```text
+dp[4] = 5
+```
+
+Final DP Array:
 
 ```text
 [-1,-1,2,3,5]
@@ -344,12 +481,23 @@ This avoids repeated recursion.
 
 ---
 
-## ⏱️ Complexity Analysis
+# ⏱️ Complexity Analysis
 
-| Complexity | Value |
-|-----------|-------|
-| Time Complexity | O(n) |
-| Space Complexity | O(n) |
+## 🕒 Time Complexity
+
+```text
+O(n)
+```
+
+---
+
+## 💾 Space Complexity
+
+```text
+O(n)
+```
+
+(DP array + recursion stack)
 
 ---
 
@@ -359,7 +507,9 @@ This avoids repeated recursion.
 
 ---
 
-## 💡 Key Idea
+# 💡 Tabulation Idea
+
+Remove recursion completely.
 
 Instead of solving:
 
@@ -367,7 +517,7 @@ Instead of solving:
 n → n-1 → n-2
 ```
 
-build answers from:
+Build answers from:
 
 ```text
 0 → 1 → 2 → 3 → n
@@ -375,7 +525,7 @@ build answers from:
 
 ---
 
-## 📌 DP State
+# 📌 DP State
 
 ```text
 dp[i] = number of ways to reach stair i
@@ -383,7 +533,7 @@ dp[i] = number of ways to reach stair i
 
 ---
 
-## 💻 Code
+# 💻 Code
 
 ```cpp
 class Solution {
@@ -408,9 +558,17 @@ public:
 
 ---
 
-## 🌳 Dry Run
+# 🌳 Tabulation Dry Run
 
-### Initial
+Input:
+
+```text
+n = 4
+```
+
+---
+
+## Initial DP Array
 
 ```text
 [1,1,_,_,_]
@@ -418,11 +576,14 @@ public:
 
 ---
 
-### Iteration
+## Iteration 1
 
 ```text
 i = 2
-dp[2] = 1 + 1 = 2
+
+dp[2] = dp[1] + dp[0]
+      = 1 + 1
+      = 2
 ```
 
 Array:
@@ -433,9 +594,14 @@ Array:
 
 ---
 
+## Iteration 2
+
 ```text
 i = 3
-dp[3] = 2 + 1 = 3
+
+dp[3] = dp[2] + dp[1]
+      = 2 + 1
+      = 3
 ```
 
 Array:
@@ -446,12 +612,17 @@ Array:
 
 ---
 
+## Iteration 3
+
 ```text
 i = 4
-dp[4] = 3 + 2 = 5
+
+dp[4] = dp[3] + dp[2]
+      = 3 + 2
+      = 5
 ```
 
-Final:
+Final Array:
 
 ```text
 [1,1,2,3,5]
@@ -465,12 +636,21 @@ Answer:
 
 ---
 
-## ⏱️ Complexity Analysis
+# ⏱️ Complexity Analysis
 
-| Complexity | Value |
-|-----------|-------|
-| Time Complexity | O(n) |
-| Space Complexity | O(n) |
+## 🕒 Time Complexity
+
+```text
+O(n)
+```
+
+---
+
+## 💾 Space Complexity
+
+```text
+O(n)
+```
 
 ---
 
@@ -480,7 +660,7 @@ Answer:
 
 ---
 
-## 💡 Important Observation
+# 💡 Important Observation
 
 We only need:
 - previous value
@@ -490,7 +670,16 @@ Entire DP array is unnecessary.
 
 ---
 
-## 💻 Code
+# 📌 Variable Meaning
+
+```text
+prev1 = dp[i-1]
+prev2 = dp[i-2]
+```
+
+---
+
+# 💻 Code
 
 ```cpp
 class Solution {
@@ -519,9 +708,17 @@ public:
 
 ---
 
-## 🌳 Dry Run
+# 🌳 Space Optimization Dry Run
 
-### Initial
+Input:
+
+```text
+n = 4
+```
+
+---
+
+## Initial
 
 ```text
 prev2 = 1
@@ -530,35 +727,51 @@ prev1 = 1
 
 ---
 
-### Iteration
+## Iteration 1
 
 ```text
 i = 2
 
 curr = 1 + 1 = 2
+```
 
+Update:
+
+```text
 prev2 = 1
 prev1 = 2
 ```
 
 ---
 
+## Iteration 2
+
 ```text
 i = 3
 
 curr = 2 + 1 = 3
+```
 
+Update:
+
+```text
 prev2 = 2
 prev1 = 3
 ```
 
 ---
 
+## Iteration 3
+
 ```text
 i = 4
 
 curr = 3 + 2 = 5
+```
 
+Update:
+
+```text
 prev2 = 3
 prev1 = 5
 ```
@@ -571,16 +784,23 @@ Return:
 
 ---
 
-## ⏱️ Complexity Analysis
+# ⏱️ Complexity Analysis
 
-| Complexity | Value |
-|-----------|-------|
-| Time Complexity | O(n) |
-| Space Complexity | O(1) |
+## 🕒 Time Complexity
+
+```text
+O(n)
+```
 
 ---
 
-<br>
+## 💾 Space Complexity
+
+```text
+O(1)
+```
+
+---
 
 # 🎤 Interview Flow
 
@@ -622,6 +842,8 @@ ways(n-1) + ways(n-2)
 
 # ⚠️ Important Interview Points
 
+---
+
 ## ❓ Why DP?
 
 Because recursion repeats states.
@@ -630,6 +852,14 @@ Example:
 
 ```text
 f(2) gets calculated multiple times
+```
+
+---
+
+## ❓ Why Memoization?
+
+```text
+Stores already computed answers
 ```
 
 ---
@@ -679,11 +909,19 @@ Only previous 2 states are needed
 
 ---
 
-# 🧩 Golden Memory Trick
+# 🧩 Golden Memory Tricks
+
+## 🔥 Recurrence Building
 
 ```text
 Think about LAST MOVE
+```
 
+---
+
+## 🔥 Counting Problems
+
+```text
 Current answer
 =
 sum of all valid previous states
@@ -691,11 +929,39 @@ sum of all valid previous states
 
 ---
 
-# 🔥 DP Evolution
+## 🔥 Memoization
 
 ```text
-Recursion repeats
-→ Store answers
-→ Build iteratively
-→ Remove extra storage
+Recursion + DP storage
+```
+
+---
+
+## 🔥 Tabulation
+
+```text
+Build answers from small → large
+```
+
+---
+
+## 🔥 Space Optimization
+
+```text
+If only few previous states are needed,
+replace array with variables
+```
+
+---
+
+# 🚀 DP Evolution Summary
+
+```text
+Recursion repeats states
+        ↓
+Store answers (Memoization)
+        ↓
+Remove recursion (Tabulation)
+        ↓
+Remove extra space (Space Optimization)
 ```
