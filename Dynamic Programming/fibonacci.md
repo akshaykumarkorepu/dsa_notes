@@ -1,4 +1,4 @@
-Fibonacci Sequence
+Problem: Fibonacci Sequence
 Pattern
 
 Dynamic Programming
@@ -11,7 +11,7 @@ Core Recurrence
 
 F(n)=F(n−1)+F(n−2)
 
-Step 1 — Recursion (Brute Force)
+Approach 1 — Recursion (Brute Force)
 Intuition
 
 To calculate:
@@ -23,9 +23,9 @@ we need:
 fib(n-1)
 fib(n-2)
 
-Directly follow the recurrence relation.
+Directly follow recurrence relation.
 
-Recursive Code
+Code
 class Solution {
 public:
 
@@ -50,38 +50,38 @@ Observation
 fib(3) repeats
 fib(2) repeats
 
-This causes repeated computation.
+Repeated computations cause inefficiency.
 
-Complexity
+Complexity Analysis
 Time Complexity
 O(2^n)
 Space Complexity
 O(n)
 
 Reason:
-Recursion stack.
+Recursion stack space.
 
 Why Recursion is Bad?
 
-For large inputs like:
+For larger inputs like:
 
 fib(40)
 
-the recursion becomes extremely slow due to repeated calls.
+the number of recursive calls becomes extremely large.
 
-Step 2 — Memoization (Top Down DP)
+Approach 2 — Memoization (Top Down DP)
 Key Idea
 
-Store already computed answers.
+Store already computed states.
 
 dp[n] = fib(n)
 
-Before solving:
+Before computing:
 
 check if answer already exists
-Important Interview Line
+Important Interview Point
 "We are caching overlapping subproblems."
-Memoization Code
+Code
 class Solution {
 public:
 
@@ -106,23 +106,22 @@ public:
     }
 };
 Dry Run
-
-Initial DP:
-
+Initial DP Array
 [-1,-1,-1,-1,-1,-1]
-
-After computation:
-
+Final DP Array
 [-1,-1,1,2,3,5]
-Complexity
+Complexity Analysis
 Time Complexity
 O(n)
 Space Complexity
 O(n)
+
+Reason:
+
 DP array
 recursion stack
-Step 3 — Tabulation (Bottom Up DP)
-Core Idea
+Approach 3 — Tabulation (Bottom Up DP)
+Key Idea
 
 Instead of solving:
 
@@ -131,7 +130,9 @@ n → n-1 → n-2
 build answers from:
 
 0 → 1 → 2 → 3 → n
-Tabulation Code
+DP State
+dp[i] = fibonacci of i
+Code
 class Solution {
 public:
 
@@ -153,14 +154,17 @@ public:
         return dp[n];
     }
 };
-DP State Meaning
-dp[i] = fibonacci of i
-Complexity
+Dry Run
+Initial
+[0,1,_,_,_,_]
+Final
+[0,1,1,2,3,5]
+Complexity Analysis
 Time Complexity
 O(n)
 Space Complexity
 O(n)
-Step 4 — Space Optimization
+Approach 4 — Space Optimization
 Important Observation
 
 We only need:
@@ -170,7 +174,18 @@ second previous value
 
 Entire DP array is unnecessary.
 
-Space Optimized Code
+Key Idea
+
+Instead of storing:
+
+dp[i-1]
+dp[i-2]
+
+store only:
+
+prev1
+prev2
+Code
 class Solution {
 public:
 
@@ -193,7 +208,7 @@ public:
         return prev1;
     }
 };
-Complexity
+Complexity Analysis
 Time Complexity
 O(n)
 Space Complexity
@@ -205,7 +220,7 @@ Explain recursion.
 
 Step 2
 
-Point out repeated calls.
+Show repeated calls.
 
 Step 3
 
@@ -223,6 +238,11 @@ Edge Cases
 n = 0
 n = 1
 very large n
+Common Mistakes
+Forgetting base cases
+Mixing memoization and tabulation
+Forgetting DP state meaning
+Confusing curr with curr[i]
 Golden Memory Trick
 Recursion repeats
 → Store answers
