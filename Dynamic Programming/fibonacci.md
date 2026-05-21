@@ -1,17 +1,17 @@
 🚀 Fibonacci Sequence
 📌 Pattern
+
 Dynamic Programming
-❓ Why DP?
 
-✅ Overlapping subproblems
-✅ Repeated recursive calls
-✅ Current state depends on previous states
-
+🧠 Why This Pattern?
+Overlapping subproblems
+Repeated recursive calls
+Current state depends on previous states
 🔁 Recurrence Relation
 
 F(n)=F(n−1)+F(n−2)
 
-🧠 Approach 1 — Recursion (Brute Force)
+1️⃣ Recursion (Brute Force)
 ✅ Intuition
 
 To calculate:
@@ -48,31 +48,18 @@ fib(5)
 └── fib(3)
 ⚠️ Observation
 
-❌ fib(3) repeats
-❌ fib(2) repeats
+Repeated calls:
+
+fib(3)
+fib(2)
 
 This causes repeated computation.
 
 ⏱️ Complexity Analysis
-Time Complexity
-O(2^n)
-Space Complexity
-O(n)
-
-Reason:
-Recursion stack space.
-
-❌ Why Recursion is Bad?
-
-For:
-
-fib(40)
-
-recursive calls explode exponentially.
-
-Very slow.
-
-🧠 Approach 2 — Memoization (Top Down DP)
+Complexity	Value
+Time Complexity	O(2^n)
+Space Complexity	O(n)
+2️⃣ Memoization (Top Down DP)
 🔑 Key Idea
 
 Store already computed answers.
@@ -80,10 +67,12 @@ Store already computed answers.
 dp[n] = fib(n)
 
 Before computing:
-✅ Check if already solved
 
-🎯 Important Interview Line
+check if answer already exists
+🎯 Important Interview Point
+
 "We are caching overlapping subproblems."
+
 💻 Code
 class Solution {
 public:
@@ -109,21 +98,15 @@ public:
     }
 };
 🌳 Dry Run
-Initial DP Array
+Initial DP
 [-1,-1,-1,-1,-1,-1]
-Final DP Array
+Final DP
 [-1,-1,1,2,3,5]
 ⏱️ Complexity Analysis
-Time Complexity
-O(n)
-Space Complexity
-O(n)
-
-Reason:
-
-DP array
-recursion stack
-🧠 Approach 3 — Tabulation (Bottom Up DP)
+Complexity	Value
+Time Complexity	O(n)
+Space Complexity	O(n)
+3️⃣ Tabulation (Bottom Up DP)
 🔑 Key Idea
 
 Instead of:
@@ -157,36 +140,20 @@ public:
         return dp[n];
     }
 };
-🌳 Dry Run
-Initial
-[0,1,_,_,_,_]
-Final
-[0,1,1,2,3,5]
 ⏱️ Complexity Analysis
-Time Complexity
-O(n)
-Space Complexity
-O(n)
-🧠 Approach 4 — Space Optimization
+Complexity	Value
+Time Complexity	O(n)
+Space Complexity	O(n)
+4️⃣ Space Optimization
 🔑 Important Observation
 
 We only need:
-✅ previous value
-✅ second previous value
 
-NOT entire DP array.
+previous value
+second previous value
 
-📌 Key Idea
+Entire DP array is unnecessary.
 
-Instead of:
-
-dp[i-1]
-dp[i-2]
-
-store:
-
-prev1
-prev2
 💻 Code
 class Solution {
 public:
@@ -211,31 +178,15 @@ public:
     }
 };
 ⏱️ Complexity Analysis
-Time Complexity
-O(n)
-Space Complexity
-O(1)
+Complexity	Value
+Time Complexity	O(n)
+Space Complexity	O(1)
 🎤 Interview Flow
-Step 1
-
-Explain recursion.
-
-Step 2
-
-Point out repeated calls.
-
-Step 3
-
-Introduce memoization.
-
-Step 4
-
-Convert to tabulation.
-
-Step 5
-
-Optimize space.
-
+Explain recursion
+Show repeated calls
+Introduce memoization
+Convert to tabulation
+Optimize space
 ⚠️ Edge Cases
 n = 0
 n = 1
