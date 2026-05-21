@@ -1,18 +1,18 @@
-Problem: Fibonacci Sequence
-Pattern
-
+🚀 Fibonacci Sequence
+📌 Pattern
 Dynamic Programming
+❓ Why DP?
 
-Why This Pattern?
-Overlapping subproblems
-Same recursive calls repeat
-Current state depends on previous states
-Core Recurrence
+✅ Overlapping subproblems
+✅ Repeated recursive calls
+✅ Current state depends on previous states
+
+🔁 Recurrence Relation
 
 F(n)=F(n−1)+F(n−2)
 
-Approach 1 — Recursion (Brute Force)
-Intuition
+🧠 Approach 1 — Recursion (Brute Force)
+✅ Intuition
 
 To calculate:
 
@@ -25,7 +25,7 @@ fib(n-2)
 
 Directly follow recurrence relation.
 
-Code
+💻 Code
 class Solution {
 public:
 
@@ -37,7 +37,7 @@ public:
         return fib(n-1) + fib(n-2);
     }
 };
-Dry Run
+🌳 Dry Run
 fib(5)
 
 ├── fib(4)
@@ -46,13 +46,14 @@ fib(5)
 │   │   └── fib(1)
 │   └── fib(2)
 └── fib(3)
-Observation
-fib(3) repeats
-fib(2) repeats
+⚠️ Observation
 
-Repeated computations cause inefficiency.
+❌ fib(3) repeats
+❌ fib(2) repeats
 
-Complexity Analysis
+This causes repeated computation.
+
+⏱️ Complexity Analysis
 Time Complexity
 O(2^n)
 Space Complexity
@@ -61,27 +62,29 @@ O(n)
 Reason:
 Recursion stack space.
 
-Why Recursion is Bad?
+❌ Why Recursion is Bad?
 
-For larger inputs like:
+For:
 
 fib(40)
 
-the number of recursive calls becomes extremely large.
+recursive calls explode exponentially.
 
-Approach 2 — Memoization (Top Down DP)
-Key Idea
+Very slow.
 
-Store already computed states.
+🧠 Approach 2 — Memoization (Top Down DP)
+🔑 Key Idea
+
+Store already computed answers.
 
 dp[n] = fib(n)
 
 Before computing:
+✅ Check if already solved
 
-check if answer already exists
-Important Interview Point
+🎯 Important Interview Line
 "We are caching overlapping subproblems."
-Code
+💻 Code
 class Solution {
 public:
 
@@ -105,12 +108,12 @@ public:
         return solve(n, dp);
     }
 };
-Dry Run
+🌳 Dry Run
 Initial DP Array
 [-1,-1,-1,-1,-1,-1]
 Final DP Array
 [-1,-1,1,2,3,5]
-Complexity Analysis
+⏱️ Complexity Analysis
 Time Complexity
 O(n)
 Space Complexity
@@ -120,19 +123,19 @@ Reason:
 
 DP array
 recursion stack
-Approach 3 — Tabulation (Bottom Up DP)
-Key Idea
+🧠 Approach 3 — Tabulation (Bottom Up DP)
+🔑 Key Idea
 
-Instead of solving:
+Instead of:
 
 n → n-1 → n-2
 
 build answers from:
 
 0 → 1 → 2 → 3 → n
-DP State
+📌 DP State
 dp[i] = fibonacci of i
-Code
+💻 Code
 class Solution {
 public:
 
@@ -154,38 +157,37 @@ public:
         return dp[n];
     }
 };
-Dry Run
+🌳 Dry Run
 Initial
 [0,1,_,_,_,_]
 Final
 [0,1,1,2,3,5]
-Complexity Analysis
+⏱️ Complexity Analysis
 Time Complexity
 O(n)
 Space Complexity
 O(n)
-Approach 4 — Space Optimization
-Important Observation
+🧠 Approach 4 — Space Optimization
+🔑 Important Observation
 
 We only need:
+✅ previous value
+✅ second previous value
 
-previous value
-second previous value
+NOT entire DP array.
 
-Entire DP array is unnecessary.
+📌 Key Idea
 
-Key Idea
-
-Instead of storing:
+Instead of:
 
 dp[i-1]
 dp[i-2]
 
-store only:
+store:
 
 prev1
 prev2
-Code
+💻 Code
 class Solution {
 public:
 
@@ -208,19 +210,19 @@ public:
         return prev1;
     }
 };
-Complexity Analysis
+⏱️ Complexity Analysis
 Time Complexity
 O(n)
 Space Complexity
 O(1)
-Interview Flow
+🎤 Interview Flow
 Step 1
 
 Explain recursion.
 
 Step 2
 
-Show repeated calls.
+Point out repeated calls.
 
 Step 3
 
@@ -234,16 +236,16 @@ Step 5
 
 Optimize space.
 
-Edge Cases
+⚠️ Edge Cases
 n = 0
 n = 1
 very large n
-Common Mistakes
+❌ Common Mistakes
 Forgetting base cases
 Mixing memoization and tabulation
 Forgetting DP state meaning
 Confusing curr with curr[i]
-Golden Memory Trick
+🧩 Golden Memory Trick
 Recursion repeats
 → Store answers
 → Build iteratively
