@@ -1,137 +1,238 @@
-# Minimum Path Sum
 
----
+# NOTE
 
-# SHORT DP NOTES
-
-```text
-PROBLEM:
+## PROBLEM:
 Minimum Path Sum
 
-PATTERN:
-Grid DP
+---
 
-WHY THIS PATTERN:
-We move on a grid and each cell depends on previous cells.
-
-MOVES:
-Down
-Right
-
-REVERSE THINKING:
-To reach (i,j),
-we can come from:
-1. Top  -> (i-1, j)
-2. Left -> (i, j-1)
-
-CORE IDEA:
-Current Cell Value +
-minimum(top path, left path)
-
-STATE:
-dp[i][j]
-=
-minimum path sum to reach cell (i,j)
-
-RECURRENCE:
-dp[i][j] =
-grid[i][j] + min(up, left)
-
-BASE CASE:
-dp[0][0] = grid[0][0]
-
-INVALID CASE:
-return 1e9
-
-WHY 1e9:
-Because we use MIN().
-Invalid path should never become minimum.
-
-WHY I MIGHT FORGET:
-I may incorrectly use 0 instead of 1e9.
-0 works for counting paths,
-NOT for minimum problems.
-
-INTERVIEW FLOW:
-1. Explain recursive thinking
-2. Show overlapping subproblems
-3. Convert to memoization
-4. Remove recursion -> tabulation
-5. Reduce space -> space optimization
-```
+# PATTERN:
+2D Grid DP
 
 ---
 
-# QUESTION EXPLANATION
+# WHY THIS PATTERN:
 
-We are given a grid.
+- We move on a grid
+- Each cell depends on previous cells
+- We need minimum cost/path
+- Multiple overlapping subproblems
 
-We start at:
-
-```text
-(0,0)
-```
-
-Need to reach:
-
-```text
-(n-1,m-1)
-```
-
-Allowed moves:
-
-```text
-Right
-Down
-```
-
-We must return:
-
-```text
-minimum possible sum path
-```
+Classic Grid DP problem.
 
 ---
 
-# MAIN DP THINKING
+# CORE IDEA:
 
-Instead of moving forward:
+From every cell `(i,j)`:
 
-Think backward.
+We can come from:
 
-To reach:
-
-```text
-(i,j)
-```
-
-we could only come from:
-
-```text
-(i-1,j)
-(i,j-1)
-```
+- Up → `(i-1,j)`
+- Left → `(i,j-1)`
 
 So:
 
 ```text
-f(i,j)=grid[i][j]+min(f(i-1,j),f(i,j-1))
+minPath(i,j) =
+grid[i][j] +
+min(
+    minPath(i-1,j),
+    minPath(i,j-1)
+)
+```
+
+---
+
+# SHORTCUT DP NOTES
+
+```text
+Move:
+Up + Left
+
+Formula:
+dp[i][j] =
+grid[i][j] + min(up,left)
+
+Base:
+dp[0][0] = grid[0][0]
+
+Invalid:
+1e9
+
+Why?
+Because invalid path should never become minimum.
+```
+
+---
+
+# WHY I MIGHT FORGET / GET STUCK
+
+- Forgetting why we use `1e9`
+- Using `0` instead of `1e9`
+- Confusing counting paths vs minimum path
+- Wrong transitions
+- Forgetting current cell value addition
+- Forgetting base case
+- Mixing up row and column
+
+---
+
+# HOW TO THINK IN INTERVIEW
+
+## Step 1
+Say:
+
+```text
+From each cell I can come from:
+1. Up
+2. Left
+```
+
+---
+
+## Step 2
+Say recurrence:
+
+```text
+dp(i,j) =
+grid[i][j] +
+min(dp(i-1,j), dp(i,j-1))
+```
+
+---
+
+## Step 3
+Discuss base cases:
+
+```text
+Out of bounds -> 1e9
+Start cell -> grid[0][0]
+```
+
+---
+
+## Step 4
+Start with recursion
+
+Then optimize:
+
+```text
+Recursion
+-> Memoization
+-> Tabulation
+-> Space Optimization
 ```
 
 ---
 
 # RECURSION
 
-# RECURSION IDEA
+# IDEA
 
-From every cell:
+We start from destination `(n-1,m-1)`.
 
-- move UP
-- move LEFT
+At every cell:
 
-until reaching `(0,0)`.
+- go UP
+- go LEFT
+
+Keep exploring until:
+
+- out of bounds
+- source reached
 
 Take minimum path.
+
+---
+
+# RECURSIVE FORMULA
+
+```text
+f(i,j) =
+grid[i][j] +
+min(f(i-1,j), f(i,j-1))
+```
+
+---
+
+# BASE CASES
+
+```text
+1. if(i < 0 || j < 0)
+   return 1e9
+
+2. if(i == 0 && j == 0)
+   return grid[0][0]
+```
+
+---
+
+# IMPORTANT SNIPPETS
+
+## Base Case
+
+```cpp
+if(i == 0 && j == 0)
+    return grid[0][0];
+```
+
+---
+
+## Invalid Path
+
+```cpp
+if(i < 0 || j < 0)
+    return 1e9;
+```
+
+---
+
+## Transition
+
+```cpp
+int up = grid[i][j] + solve(i - 1, j, grid);
+
+int left = grid[i][j] + solve(i, j - 1, grid);
+
+return min(up, left);
+```
+
+---
+
+# RECURSION CODE
+
+```cpp
+class Solution {
+public:
+
+    int solve(int i, int j,
+              vector<vector<int>>& grid){
+
+        if(i == 0 && j == 0)
+            return grid[0][0];
+
+        if(i < 0 || j < 0)
+            return 1e9;
+
+        int up = grid[i][j]
+               + solve(i - 1, j, grid);
+
+        int left = grid[i][j]
+                 + solve(i, j - 1, grid);
+
+        return min(up, left);
+    }
+
+    int minPathSum(vector<vector<int>>& grid) {
+
+        int n = grid.size();
+        int m = grid[0].size();
+
+        return solve(n - 1, m - 1, grid);
+    }
+};
+```
 
 ---
 
@@ -139,18 +240,19 @@ Take minimum path.
 
 Grid:
 
-| 1 | 3 | 1 |
-|---|---|---|
-| 1 | 5 | 1 |
-| 4 | 2 | 1 |
+```text
+1 3 1
+1 5 1
+4 2 1
+```
 
-Need:
+Start:
 
 ```text
 solve(2,2)
 ```
 
-This becomes:
+Calls:
 
 ```text
 1 + min(
@@ -170,90 +272,35 @@ solve(1,2)
 )
 ```
 
-Recursion continues till:
+Eventually reaches:
 
 ```text
 (0,0)
 ```
 
----
-
-# IMPORTANT RECURSION SNIPPETS
-
-## Base Case
-
-```cpp
-if(i == 0 && j == 0)
-    return grid[0][0];
-```
-
----
-
-## Out of Bounds
-
-```cpp
-if(i < 0 || j < 0)
-    return 1e9;
-```
-
----
-
-## Transition
-
-```cpp
-int up = grid[i][j] + solve(i-1, j);
-
-int left = grid[i][j] + solve(i, j-1);
-
-return min(up, left);
-```
-
----
-
-# RECURSION CODE
-
-```cpp
-class Solution {
-public:
-
-    int solve(int i, int j, vector<vector<int>>& grid){
-
-        // Reached starting cell
-        if(i == 0 && j == 0)
-            return grid[0][0];
-
-        // Out of bounds
-        if(i < 0 || j < 0)
-            return 1e9;
-
-        int up = grid[i][j] + solve(i - 1, j, grid);
-
-        int left = grid[i][j] + solve(i, j - 1, grid);
-
-        return min(up, left);
-    }
-
-    int minPathSum(vector<vector<int>>& grid) {
-
-        int n = grid.size();
-        int m = grid[0].size();
-
-        return solve(n - 1, m - 1, grid);
-    }
-};
-```
-
----
-
-# RECURSION TC & SC
+Minimum answer becomes:
 
 ```text
-TC:
-O(2^(n+m))
+7
+```
 
-SC:
+---
+
+# TC
+
+```text
+O(2^(n+m))
+```
+
+---
+
+# SC
+
+```text
 O(n+m)
 ```
+
+Recursion stack depth.
 
 ---
 
@@ -267,7 +314,7 @@ Example:
 solve(1,1)
 ```
 
-gets called many times.
+gets calculated many times.
 
 This is:
 
@@ -281,19 +328,76 @@ So we use DP.
 
 # MEMOIZATION
 
-# MEMOIZATION IDEA
+# IDEA
 
-Store already computed answers.
+Recursion recalculates same states many times.
 
-Use:
+Store answers in dp table.
 
-```cpp
-dp[i][j]
+---
+
+# MEMOIZATION FORMULA
+
+```text
+dp(i,j) =
+grid[i][j] +
+min(dp(i-1,j), dp(i,j-1))
 ```
 
-If answer already exists:
+---
 
-return it directly.
+# IMPORTANT SNIPPET
+
+```cpp
+if(dp[i][j] != -1)
+    return dp[i][j];
+```
+
+---
+
+# MEMOIZATION CODE
+
+```cpp
+class Solution {
+public:
+
+    int solve(int i, int j,
+              vector<vector<int>>& grid,
+              vector<vector<int>>& dp){
+
+        if(i == 0 && j == 0)
+            return grid[0][0];
+
+        if(i < 0 || j < 0)
+            return 1e9;
+
+        if(dp[i][j] != -1)
+            return dp[i][j];
+
+        int up = grid[i][j]
+               + solve(i - 1, j, grid, dp);
+
+        int left = grid[i][j]
+                 + solve(i, j - 1, grid, dp);
+
+        return dp[i][j] = min(up, left);
+    }
+
+    int minPathSum(vector<vector<int>>& grid) {
+
+        int n = grid.size();
+        int m = grid[0].size();
+
+        vector<vector<int>> dp(
+            n,
+            vector<int>(m, -1)
+        );
+
+        return solve(n - 1, m - 1,
+                     grid, dp);
+    }
+};
+```
 
 ---
 
@@ -334,159 +438,52 @@ Next time directly returned.
 
 ---
 
-# IMPORTANT MEMOIZATION SNIPPETS
-
-## DP Check
-
-```cpp
-if(dp[i][j] != -1)
-    return dp[i][j];
-```
-
----
-
-## Store Answer
-
-```cpp
-return dp[i][j] = min(up, left);
-```
-
----
-
-# MEMOIZATION CODE
-
-```cpp
-class Solution {
-public:
-
-    int solve(int i, int j,
-              vector<vector<int>>& grid,
-              vector<vector<int>>& dp){
-
-        if(i == 0 && j == 0)
-            return grid[0][0];
-
-        if(i < 0 || j < 0)
-            return 1e9;
-
-        if(dp[i][j] != -1)
-            return dp[i][j];
-
-        int up = grid[i][j] + solve(i - 1, j, grid, dp);
-
-        int left = grid[i][j] + solve(i, j - 1, grid, dp);
-
-        return dp[i][j] = min(up, left);
-    }
-
-    int minPathSum(vector<vector<int>>& grid) {
-
-        int n = grid.size();
-        int m = grid[0].size();
-
-        vector<vector<int>> dp(n, vector<int>(m, -1));
-
-        return solve(n - 1, m - 1, grid, dp);
-    }
-};
-```
-
----
-
-# MEMOIZATION TC & SC
+# TC
 
 ```text
-TC:
 O(n*m)
+```
 
-SC:
+---
+
+# SC
+
+```text
 O(n*m) + O(n+m)
 ```
+
+- DP table
+- recursion stack
 
 ---
 
 # TABULATION
 
-# TABULATION IDEA
+# IDEA
 
-Remove recursion.
-
-Fill DP table iteratively.
+Convert recursion to iterative DP.
 
 Build answers from smaller states.
 
 ---
 
-# DP STATE
-
-```cpp
-dp[i][j]
-=
-minimum path sum to reach (i,j)
-```
-
----
-
-# TABULATION DRY RUN
-
-Grid:
-
-| 1 | 3 | 1 |
-|---|---|---|
-| 1 | 5 | 1 |
-| 4 | 2 | 1 |
-
----
-
-## Start
+# TABULATION FLOW
 
 ```text
-dp[0][0] = 1
+Top Left -> Bottom Right
+```
+
+Every cell depends on:
+
+```text
+Up + Left
 ```
 
 ---
 
-## First Row
+# IMPORTANT SNIPPETS
 
-```text
-dp[0][1] = 4
-dp[0][2] = 5
-```
-
----
-
-## First Column
-
-```text
-dp[1][0] = 2
-dp[2][0] = 6
-```
-
----
-
-## Remaining
-
-```text
-dp[1][1] = 5 + min(4,2) = 7
-
-dp[1][2] = 1 + min(5,7) = 6
-
-dp[2][1] = 2 + min(7,6) = 8
-
-dp[2][2] = 1 + min(6,8) = 7
-```
-
-Final Answer:
-
-```text
-7
-```
-
----
-
-# IMPORTANT TABULATION SNIPPETS
-
-## Initialize Invalid Paths
+## Invalid Paths
 
 ```cpp
 int up = 1e9;
@@ -500,16 +497,18 @@ int left = 1e9;
 If:
 
 ```cpp
-up = 0
+up = 0;
 ```
 
-then:
+Then:
 
 ```cpp
 min(0,left)
 ```
 
 may choose invalid path.
+
+Wrong.
 
 So use:
 
@@ -522,7 +521,8 @@ very large number
 # TRANSITION
 
 ```text
-dp[i][j]=grid[i][j]+min(dp[i-1][j],dp[i][j-1])
+dp[i][j] =
+grid[i][j] + min(up,left)
 ```
 
 ---
@@ -538,7 +538,10 @@ public:
         int n = grid.size();
         int m = grid[0].size();
         
-        vector<vector<int>> dp(n, vector<int>(m, 0));
+        vector<vector<int>> dp(
+            n,
+            vector<int>(m, 0)
+        );
         
         for(int i = 0; i < n; i++) {
             
@@ -553,13 +556,13 @@ public:
                     int up = 1e9;
                     int left = 1e9;
                     
-                    if(i > 0) {
-                        up = grid[i][j] + dp[i - 1][j];
-                    }
+                    if(i > 0)
+                        up = grid[i][j]
+                           + dp[i - 1][j];
                     
-                    if(j > 0) {
-                        left = grid[i][j] + dp[i][j - 1];
-                    }
+                    if(j > 0)
+                        left = grid[i][j]
+                             + dp[i][j - 1];
                     
                     dp[i][j] = min(up, left);
                 }
@@ -573,13 +576,43 @@ public:
 
 ---
 
-# TABULATION TC & SC
+# TABULATION DRY RUN
+
+Grid:
 
 ```text
-TC:
-O(n*m)
+1 3 1
+1 5 1
+4 2 1
+```
 
-SC:
+DP:
+
+```text
+1 4 5
+2 7 6
+6 8 7
+```
+
+Answer:
+
+```text
+7
+```
+
+---
+
+# TC
+
+```text
+O(n*m)
+```
+
+---
+
+# SC
+
+```text
 O(n*m)
 ```
 
@@ -587,99 +620,34 @@ O(n*m)
 
 # SPACE OPTIMIZATION
 
-# SPACE OPTIMIZATION IDEA
+# IDEA
 
-Observe:
-
-```cpp
-dp[i][j]
-```
-
-depends only on:
-
-```cpp
-dp[i-1][j]
-dp[i][j-1]
-```
-
-So we only need:
+Current row only depends on:
 
 - previous row
-- current row
+- current row left value
 
-No need entire matrix.
+So we do not need entire matrix.
 
----
-
-# SPACE OPTIMIZATION DRY RUN
-
-At current row:
-
-```cpp
-prev[j]
-```
-
-represents:
+Use:
 
 ```text
-top cell
+prev[]
+curr[]
 ```
 
-And:
+---
 
-```cpp
-curr[j-1]
-```
-
-represents:
+# IMPORTANT OBSERVATION
 
 ```text
-left cell
-```
-
-After finishing row:
-
-```cpp
-prev = curr
+up    -> prev[j]
+left  -> curr[j-1]
 ```
 
 ---
 
-# IMPORTANT SPACE OPTIMIZATION SNIPPETS
-
-## Previous Row
-
-```cpp
-vector<int> prev(m, 0);
-```
-
----
-
-## Current Row
-
-```cpp
-vector<int> curr(m, 0);
-```
-
----
-
-## Top
-
-```cpp
-up = grid[i][j] + prev[j];
-```
-
----
-
-## Left
-
-```cpp
-left = grid[i][j] + curr[j-1];
-```
-
----
-
-# SPACE OPTIMIZATION CODE
+# SPACE OPTIMIZED CODE
 
 ```cpp
 class Solution {
@@ -707,13 +675,13 @@ public:
                     int up = 1e9;
                     int left = 1e9;
                     
-                    if(i > 0) {
-                        up = grid[i][j] + prev[j];
-                    }
+                    if(i > 0)
+                        up = grid[i][j]
+                           + prev[j];
                     
-                    if(j > 0) {
-                        left = grid[i][j] + curr[j - 1];
-                    }
+                    if(j > 0)
+                        left = grid[i][j]
+                             + curr[j - 1];
                     
                     curr[j] = min(up, left);
                 }
@@ -729,109 +697,121 @@ public:
 
 ---
 
-# SPACE OPTIMIZATION TC & SC
+# SPACE OPTIMIZATION DRY RUN
+
+After Row 0:
 
 ```text
-TC:
-O(n*m)
+prev = [1 4 5]
+```
 
-SC:
+After Row 1:
+
+```text
+prev = [2 7 6]
+```
+
+After Row 2:
+
+```text
+prev = [6 8 7]
+```
+
+Answer:
+
+```text
+7
+```
+
+---
+
+# TC
+
+```text
+O(n*m)
+```
+
+---
+
+# SC
+
+```text
 O(m)
 ```
 
 ---
 
-# HOW TO EXPLAIN IN INTERVIEW
+# INTERVIEW FLOW
 
-# STEP 1
+If interviewer asks:
 
-Say:
+```text
+Minimum Path Sum
+```
+
+You should say:
+
+---
+
+## STEP 1
 
 ```text
 This is a Grid DP problem.
+Each cell depends on:
+1. Up
+2. Left
 ```
-
-because:
-
-- movement inside grid
-- state depends on previous cells
 
 ---
 
-# STEP 2
+## STEP 2
 
-Explain reverse thinking:
+State recurrence:
 
 ```text
-To reach (i,j),
-I can come from:
-top or left
+dp(i,j) =
+grid[i][j] +
+min(dp(i-1,j), dp(i,j-1))
 ```
 
 ---
 
-# STEP 3
+## STEP 3
 
-Write recurrence:
+Mention base cases:
 
 ```text
-f(i,j)=grid[i][j]+min(f(i-1,j),f(i,j-1))
+Out of bounds -> 1e9
+Start cell -> grid[0][0]
 ```
 
 ---
 
-# STEP 4
+## STEP 4
 
-Explain base cases.
-
----
-
-# STEP 5
-
-Start with recursion.
-
-Then say:
+Say optimization flow:
 
 ```text
-This recalculates states repeatedly.
+Recursion
+-> Memoization
+-> Tabulation
+-> Space Optimization
 ```
 
 ---
 
-# STEP 6
-
-Move to memoization.
-
----
-
-# STEP 7
-
-Then say:
+# FINAL MEMORY TRICK
 
 ```text
-We can remove recursion stack
-using tabulation.
+GRID PATH QUESTIONS:
+
+Count ways:
+UP + LEFT
+
+Minimum path:
+MIN(UP, LEFT)
+
+Maximum path:
+MAX(UP, LEFT)
 ```
-
----
-
-# STEP 8
-
-Finally optimize space.
-
----
-
-# MOST IMPORTANT THING TO REMEMBER
-
-```text
-COUNT PATHS:
-invalid = 0
-
-MINIMUM PATH:
-invalid = large number
-
-MAXIMUM PATH:
-invalid = very small number
-```
-
-This is the biggest confusion point in grid DP problems.
+````
