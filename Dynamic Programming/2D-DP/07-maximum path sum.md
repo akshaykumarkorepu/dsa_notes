@@ -839,6 +839,4 @@ Finally,
 because ending point is variable,
 I take maximum from last row.
 ```
-
-Source reference: :contentReference[oaicite:0]{index=0}
 ````
