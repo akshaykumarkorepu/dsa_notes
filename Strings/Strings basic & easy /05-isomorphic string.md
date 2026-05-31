@@ -13,7 +13,7 @@ Hashing / Character Mapping
 
 # WHY THIS PATTERN:
 
-This question is about maintaining a:
+This problem is about maintaining a:
 
 ```text
 One-to-One Mapping
@@ -26,7 +26,7 @@ We need to ensure:
 1. Same character always maps consistently
 2. Two different characters do NOT map to same character
 
-This is NOT a frequency problem.
+This is NOT a frequency matching problem.
 
 This is a:
 
@@ -60,81 +60,57 @@ s1[i] -> s2[i]
 
 represents the CURRENT mapping.
 
-For every mapping:
+For every mapping we must check:
 
-We must check:
+---
 
-## 1. Was this character already mapped before?
+## RULE 1 — CONSISTENCY
 
-If YES:
+Same character must always map the same way.
 
-- current mapping MUST match old mapping
-
-Example:
+VALID:
 
 ```text
 a -> x
 a -> x
 ```
 
-VALID.
-
-But:
+INVALID:
 
 ```text
 a -> x
 a -> y
 ```
 
-INVALID.
-
 ---
 
-## 2. If character is new:
+## RULE 2 — UNIQUENESS
 
-Then target character must NOT already be occupied.
+Two different characters cannot map to same character.
 
-Example:
+INVALID:
 
 ```text
 a -> x
 b -> x
 ```
 
-INVALID.
+---
 
-Because two characters cannot map to same character.
+# WHY WE USE HASHMAP + HASHSET
 
 ---
 
-# WHY WE USE HASHMAP AND HASHSET
-
----
-
-# WHY HASHMAP?
+# HASHMAP
 
 ```cpp
-unordered_map<char, char> mp;
+unordered_map<char,char> mp;
 ```
 
-We use a:
+Stores:
 
 ```text
-HashMap
-```
-
-because we need to store:
-
-```text
-relationship / mapping
-```
-
-between characters.
-
-Specifically:
-
-```text
-character from s1 -> character from s2
+s1 -> s2 mapping
 ```
 
 Example:
@@ -144,256 +120,74 @@ a -> x
 b -> y
 ```
 
----
-
-# WHAT DOES HASHMAP HELP US ANSWER?
-
-It helps answer:
+Purpose:
 
 ```text
-What was this character mapped to earlier?
-```
-
-Example:
-
-Suppose earlier:
-
-```text
-a -> x
-```
-
-was stored.
-
-Now later if we see:
-
-```text
-a -> y
-```
-
-we can check:
-
-```cpp
-mp['a']
-```
-
-which gives:
-
-```text
-x
-```
-
-Then we compare:
-
-```text
-x != y
-```
-
-So mapping became inconsistent.
-
-INVALID.
-
----
-
-# VERY IMPORTANT UNDERSTANDING
-
-HashMap is needed because:
-
-```text
-we need BOTH:
-- key
-- value
-```
-
-We are storing:
-
-| Key | Value |
-|---|---|
-| a | x |
-| b | y |
-
-A set CANNOT do this.
-
-Because set only stores values.
-
-It cannot store relationships.
-
----
-
-# SO HASHMAP IS USED FOR:
-
-```text
-Checking consistency
+Checks consistency
 ```
 
 Meaning:
 
 ```text
-Did this character map the same way earlier?
+If a mapped to x earlier,
+it must STILL map to x.
 ```
 
 ---
 
-# WHY HASHSET?
+# HASHSET
 
 ```cpp
 unordered_set<char> used;
 ```
 
-We use a:
+Stores:
 
 ```text
-HashSet
-```
-
-because we ONLY care about:
-
-```text
-whether a character is already occupied or not
-```
-
-We do NOT care:
-
-```text
-WHO mapped to it
-```
-
-We only care:
-
-```text
-Is this target character already taken?
-```
-
----
-
-# EXAMPLE
-
-Suppose:
-
-```text
-a -> x
-```
-
-already exists.
-
-Now:
-
-```text
-x
-```
-
-is occupied.
-
-So we store:
-
-```text
-used = {x}
-```
-
----
-
-# NOW LATER
-
-Suppose we try:
-
-```text
-b -> x
-```
-
-Before creating mapping:
-
-we check:
-
-```cpp
-used.count('x')
-```
-
-If TRUE:
-
-then:
-
-```text
-x already occupied
-```
-
-So:
-
-```text
-INVALID
-```
-
----
-
-# IMPORTANT UNDERSTANDING
-
-For uniqueness checking:
-
-we ONLY need:
-
-```text
-existence checking
-```
-
-We do NOT need mapping.
-
-We only care:
-
-```text
-Is x already used?
-```
-
-YES or NO.
-
-That is exactly what Set is best for.
-
----
-
-# SIMPLE INTUITION
-
-## HashMap
-
-```text
-Stores relationships
+already occupied characters from s2
 ```
 
 Example:
 
 ```text
-a -> x
+used = {x,y}
+```
+
+Meaning:
+
+```text
+x and y are already taken
+```
+
+Purpose:
+
+```text
+Checks uniqueness
+```
+
+Meaning:
+
+```text
+No other character can map to x now.
 ```
 
 ---
 
-## HashSet
+# IMPORTANT INTUITION
+
+This question is NOT asking:
 
 ```text
-Stores occupied characters
+Do frequencies match?
 ```
 
-Example:
+It is asking:
 
 ```text
-x already taken
+Is mapping valid, consistent and unique?
 ```
 
----
-
-# MEMORY TRICK
-
-Think:
-
-## HashMap
-
-```text
-Who maps to whom?
-```
-
----
-
-## HashSet
-
-```text
-Which characters are already occupied?
-```
+That is the MOST important understanding.
 
 ---
 
@@ -415,9 +209,7 @@ c1 -> c2
 
 ---
 
-# CASE 1
-
-## Character already mapped before
+# CASE 1 — CHARACTER ALREADY MAPPED
 
 ```cpp
 if(mp.count(c1))
@@ -431,7 +223,7 @@ Did we already map c1 earlier?
 
 If YES:
 
-verify mapping consistency.
+verify consistency.
 
 ```cpp
 if(mp[c1] != c2)
@@ -448,15 +240,13 @@ INVALID.
 
 ---
 
-# CASE 2
-
-## Character appearing first time
+# CASE 2 — CHARACTER APPEARING FIRST TIME
 
 ```cpp
 else
 ```
 
-Now we try to create new mapping.
+Now we try creating new mapping.
 
 Before creating mapping:
 
@@ -467,16 +257,10 @@ if(used.count(c2))
     return false;
 ```
 
-This asks:
+Meaning:
 
 ```text
-Is c2 already occupied?
-```
-
-If YES:
-
-```text
-Another character already maps to c2
+Another character already mapped here
 ```
 
 INVALID.
@@ -485,7 +269,7 @@ INVALID.
 
 # OTHERWISE
 
-Create new mapping.
+Create mapping.
 
 ```cpp
 mp[c1] = c2;
@@ -497,30 +281,12 @@ Meaning:
 ```text
 Store mapping
 +
-Mark target character as occupied
+Mark target character occupied
 ```
 
 ---
 
-# VERY IMPORTANT INTUITION
-
-This question is NOT asking:
-
-```text
-Do frequencies match?
-```
-
-It is asking:
-
-```text
-Is mapping valid, consistent and unique?
-```
-
-That is the MOST important understanding.
-
----
-
-# DRY RUN 1 (VALID CASE)
+# HASHMAP DRY RUN (VALID CASE)
 
 ## INPUT
 
@@ -548,23 +314,10 @@ Current mapping:
 a -> x
 ```
 
-### Check:
+- a not mapped before
+- x not occupied
 
-```text
-Was a already mapped?
-```
-
-NO.
-
-### Check:
-
-```text
-Is x already occupied?
-```
-
-NO.
-
-### Create mapping
+Create mapping.
 
 ```text
 mp = {a:x}
@@ -581,31 +334,13 @@ Current mapping:
 a -> x
 ```
 
-### Check:
+- a already mapped
+- old mapping = x
+- current mapping = x
 
-```text
-Was a already mapped?
-```
+Consistent.
 
-YES.
-
-Earlier:
-
-```text
-a -> x
-```
-
-Current:
-
-```text
-a -> x
-```
-
-Same mapping.
-
-VALID.
-
-Nothing changes.
+Continue.
 
 ---
 
@@ -617,34 +352,17 @@ Current mapping:
 b -> y
 ```
 
-### Check:
+- b not mapped
+- y free
+
+Create mapping.
 
 ```text
-Was b already mapped?
-```
-
-NO.
-
-### Check:
-
-```text
-Is y occupied?
-```
-
-NO.
-
-### Create mapping
-
-```text
-mp = {a:x, b:y}
+mp = {a:x,b:y}
 used = {x,y}
 ```
 
----
-
-# LOOP FINISHES
-
-No conflicts found.
+Loop finishes.
 
 Return:
 
@@ -654,7 +372,7 @@ true
 
 ---
 
-# DRY RUN 2 (FAILURE CASE)
+# FAILURE CASE 1
 
 ## INPUT
 
@@ -665,36 +383,21 @@ s2 = "xyz"
 
 ---
 
-# ITERATION 1
+# FAILURE
 
-```text
-a -> x
-```
-
-Store mapping.
-
-```text
-mp = {a:x}
-used = {x}
-```
-
----
-
-# ITERATION 2
-
-Current mapping:
-
-```text
-a -> y
-```
-
-But earlier:
+Earlier:
 
 ```text
 a -> x
 ```
 
 Now:
+
+```text
+a -> y
+```
+
+This line detects inconsistency:
 
 ```cpp
 if(mp[c1] != c2)
@@ -708,25 +411,338 @@ x != y
 
 TRUE.
 
-Return:
+Return false.
+
+---
+
+# FAILURE CASE 2
+
+## INPUT
 
 ```text
-false
+s1 = "abc"
+s2 = "xxz"
 ```
 
 ---
 
-# WHY DID IT FAIL?
+# FAILURE
 
-Because:
+Earlier:
 
 ```text
-Same character mapped differently
+a -> x
+```
+
+Now:
+
+```text
+b -> x
+```
+
+This line detects uniqueness violation:
+
+```cpp
+if(used.count(c2))
+```
+
+because:
+
+```text
+x already occupied
+```
+
+Return false.
+
+---
+
+# FULL HASHMAP + HASHSET CODE
+
+```cpp
+class Solution {
+  public:
+    bool areIsomorphic(string &s1, string &s2) {
+
+        unordered_map<char,char> mp;
+        unordered_set<char> used;
+
+        for(int i=0;i<s1.size();i++){
+
+            char c1 = s1[i];
+            char c2 = s2[i];
+
+            if(mp.count(c1)){
+
+                if(mp[c1] != c2)
+                    return false;
+            }
+
+            else{
+
+                if(used.count(c2))
+                    return false;
+
+                mp[c1] = c2;
+                used.insert(c2);
+            }
+        }
+
+        return true;
+    }
+};
 ```
 
 ---
 
-# DRY RUN 3 (FAILURE CASE)
+# ARRAY OPTIMIZATION
+
+Since character range is fixed:
+
+```text
+26 lowercase letters
+```
+
+we can replace hashmap with arrays.
+
+This removes hashing overhead and gives:
+
+```text
+direct indexing
+```
+
+---
+
+# WHY ARRAYS WORK
+
+Characters are internally numbers.
+
+| Character | Index |
+|---|---|
+| a | 0 |
+| b | 1 |
+| c | 2 |
+| x | 23 |
+
+This line:
+
+```cpp
+int c1 = s1[i] - 'a';
+```
+
+converts character into index.
+
+Example:
+
+```text
+'c' - 'a' = 2
+```
+
+because:
+
+```text
+c is 2 positions after a
+```
+
+---
+
+# WHY TWO ARRAYS?
+
+---
+
+# map1
+
+```cpp
+map1[c1]
+```
+
+stores:
+
+```text
+s1 -> s2
+```
+
+Example:
+
+```text
+a -> x
+```
+
+---
+
+# map2
+
+```cpp
+map2[c2]
+```
+
+stores:
+
+```text
+s2 -> s1
+```
+
+Example:
+
+```text
+x -> a
+```
+
+Purpose:
+
+```text
+Checks reverse uniqueness
+```
+
+---
+
+# WHY map2 IS IMPORTANT
+
+Suppose:
+
+```text
+a -> x
+```
+
+already exists.
+
+Now later:
+
+```text
+b -> x
+```
+
+Without map2,
+you cannot detect:
+
+```text
+x already occupied
+```
+
+---
+
+# WHY +1 IS USED
+
+Initially:
+
+```cpp
+int map1[26] = {0};
+```
+
+All values are:
+
+```text
+0
+```
+
+Meaning:
+
+```text
+UNMAPPED
+```
+
+---
+
+# PROBLEM
+
+Suppose:
+
+```text
+a -> a
+```
+
+Then:
+
+```text
+c2 = 0
+```
+
+If we directly stored:
+
+```cpp
+map1[c1] = c2;
+```
+
+then:
+
+```cpp
+map1[0] = 0;
+```
+
+But:
+
+```text
+0 already means unmapped
+```
+
+Problem.
+
+---
+
+# SO WE STORE
+
+```text
+c2 + 1
+```
+
+Example:
+
+| Actual Index | Stored Value |
+|---|---|
+| 0 | 1 |
+| 1 | 2 |
+| 23 | 24 |
+
+Now:
+
+```text
+0
+```
+
+safely means:
+
+```text
+UNMAPPED
+```
+
+---
+
+# ARRAY CONDITIONS
+
+---
+
+# NEW MAPPING
+
+```cpp
+if(map1[c1] == 0 && map2[c2] == 0)
+```
+
+Meaning:
+
+```text
+Neither side mapped yet
+```
+
+So create mapping.
+
+---
+
+# INCONSISTENT MAPPING
+
+```cpp
+else if(map1[c1] != c2 + 1 || map2[c2] != c1 + 1)
+```
+
+Meaning:
+
+```text
+mapping inconsistent
+```
+
+Return false.
+
+---
+
+# ARRAY DRY RUN FAILURE CASE
 
 ## INPUT
 
@@ -746,181 +762,67 @@ a -> x
 Store mapping.
 
 ```text
-mp = {a:x}
-used = {x}
+map1[0] = 24
+map2[23] = 1
+```
+
+Meaning:
+
+```text
+a -> x
+x -> a
 ```
 
 ---
 
 # ITERATION 2
 
-Current mapping:
-
 ```text
 b -> x
 ```
 
-Check:
-
-```text
-Is x already occupied?
-```
-
-YES.
-
-Because earlier:
-
-```text
-a -> x
-```
-
-already existed.
-
-So:
+Now:
 
 ```cpp
-if(used.count(c2))
+map2[23] != 0
 ```
 
-becomes TRUE.
-
-Return:
+because:
 
 ```text
-false
+x already mapped by a
 ```
+
+So mapping becomes inconsistent.
+
+Return false.
 
 ---
 
-# WHY DID IT FAIL?
-
-Because:
-
-```text
-Two characters mapped to same character
-```
-
----
-
-# INTERVIEW EXPLANATION FLOW
-
-If interviewer asks:
-
-```text
-Explain your approach.
-```
-
-Say this:
-
----
-
-“We need to maintain a one-to-one mapping between characters of both strings.
-
-So while traversing both strings together:
-
-- if a character from s1 was already mapped earlier, then its current mapping must remain consistent
-- if it is appearing for first time, then the target character in s2 must not already be occupied by another character
-
-To implement this:
-
-- I use a hashmap to store mappings
-- and a hashset to track already occupied target characters
-
-This guarantees both consistency and uniqueness of mapping.”
-
----
-
-# IMPORTANT CODE SNIPPETS
-
-## CHECK IF CHARACTER ALREADY MAPPED
-
-```cpp
-if(mp.count(c1))
-```
-
-Meaning:
-
-```text
-Did this character already get mapped earlier?
-```
-
----
-
-# VERIFY CONSISTENCY
-
-```cpp
-if(mp[c1] != c2)
-    return false;
-```
-
-Meaning:
-
-```text
-Earlier mapping and current mapping mismatch
-```
-
----
-
-# CHECK IF TARGET ALREADY OCCUPIED
-
-```cpp
-if(used.count(c2))
-    return false;
-```
-
-Meaning:
-
-```text
-Another character already mapped here
-```
-
----
-
-# CREATE NEW MAPPING
-
-```cpp
-mp[c1] = c2;
-used.insert(c2);
-```
-
-Meaning:
-
-```text
-Store mapping
-+
-Mark target character occupied
-```
-
----
-
-# FULL CODE
+# FULL ARRAY CODE
 
 ```cpp
 class Solution {
   public:
+    bool areIsomorphic(string &s1, string &s2) {
 
-    bool areIsomorphic(string s1, string s2) {
+        int map1[26] = {0};
+        int map2[26] = {0};
 
-        unordered_map<char, char> mp;
-        unordered_set<char> used;
+        for (int i = 0; i < s1.length(); i++) {
 
-        for(int i = 0; i < s1.size(); i++) {
+            int c1 = s1[i] - 'a';
+            int c2 = s2[i] - 'a';
 
-            char c1 = s1[i];
-            char c2 = s2[i];
+            if (map1[c1] == 0 && map2[c2] == 0) {
 
-            if(mp.count(c1)) {
-
-                if(mp[c1] != c2)
-                    return false;
+                map1[c1] = c2 + 1;
+                map2[c2] = c1 + 1;
             }
-            else {
 
-                if(used.count(c2))
-                    return false;
+            else if (map1[c1] != c2 + 1 || map2[c2] != c1 + 1) {
 
-                mp[c1] = c2;
-                used.insert(c2);
+                return false;
             }
         }
 
@@ -935,22 +837,22 @@ class Solution {
 
 ## TC: O(n)
 
-We traverse the strings once.
+We traverse strings once.
 
-Loop runs:
+Every operation:
+
+- hashmap lookup
+- hashmap insertion
+- array access
+- set lookup
+
+takes:
 
 ```text
-n times
+O(1)
 ```
 
-Inside every iteration:
-
-- hashmap lookup → O(1)
-- hashmap insertion → O(1)
-- set lookup → O(1)
-- set insertion → O(1)
-
-So total:
+So overall:
 
 ```text
 O(n)
@@ -960,39 +862,90 @@ O(n)
 
 # SPACE COMPLEXITY
 
-## SC: O(1)
+## HASHMAP VERSION
 
-Why?
+Technically:
 
-Only lowercase English letters exist.
+```text
+O(26)
+```
 
-Maximum mappings possible:
+because only lowercase letters.
+
+So:
+
+```text
+O(1)
+```
+
+---
+
+# ARRAY VERSION
+
+Arrays are fixed size:
 
 ```text
 26
 ```
 
-So hashmap/set size never grows beyond constant size.
-
-Technically:
+So:
 
 ```text
-O(26) = O(1)
+O(1)
 ```
 
 ---
 
-# BRUTE FORCE?
+# INTERVIEW FLOW
 
-NOT REQUIRED.
+If interviewer asks:
 
-Reason:
+```text
+Explain your approach.
+```
 
-The hashmap solution is already direct and intuitive.
+Say:
 
-There is no meaningful brute-force progression here.
+---
 
-Most interviewers expect the optimal mapping approach immediately.
+“We need to maintain a one-to-one mapping between characters of both strings.
+
+So while traversing both strings together:
+
+- if a character was already mapped earlier,
+  its mapping must remain consistent
+
+- if it is appearing for first time,
+  then target character should not already be occupied
+
+To implement this:
+
+- I use hashmap for consistency
+- and hashset for uniqueness
+
+Since character range is fixed,
+we can further optimize this using arrays.”
+
+---
+
+# WHEN TO USE HASHMAP
+
+Use hashmap when:
+
+- character range unknown
+- Unicode
+- strings
+- objects
+
+---
+
+# WHEN TO USE ARRAYS
+
+Use arrays when:
+
+- lowercase letters
+- ASCII chars
+- fixed small range
 
 ---
 
@@ -1020,17 +973,7 @@ INVALID.
 
 ---
 
-## 3. Single character strings
-
-```text
-a -> z
-```
-
-VALID.
-
----
-
-## 4. Same strings
+## 3. Same strings
 
 ```text
 abc -> abc
@@ -1042,25 +985,23 @@ Characters can map to themselves.
 
 ---
 
+## 4. Single character strings
+
+```text
+a -> z
+```
+
+VALID.
+
+---
+
 # WHY I MIGHT FORGET THIS QUESTION
 
-- forgetting reverse uniqueness condition
-- only checking consistency
-- forgetting that:
-
-```text
-b -> x
-```
-
-must fail if:
-
-```text
-a -> x
-```
-
-already exists
-
-- confusing this with frequency matching problems
+- forgetting reverse uniqueness
+- only checking forward mapping
+- confusing it with frequency matching
+- forgetting why map2 exists
+- forgetting why +1 is used in arrays
 
 ---
 
@@ -1087,6 +1028,12 @@ consistent replacement
 immediately think:
 
 ```text
-HashMap + HashSet
+HashMap + uniqueness checking
+```
+
+Then optimize to:
+
+```text
+Array mapping
 ```
 ````
