@@ -176,6 +176,90 @@ This invariant is maintained throughout the algorithm.
 
 ---
 
+## BRUTE FORCE (General - Works for Any Array)
+
+### Idea
+
+Maintain a separate array `result` containing only unique elements found so far.
+
+For every element in the original array, linearly search the `result` array.
+
+- If the element already exists → skip it.
+- Otherwise → add it to `result`.
+
+Since each new element may scan the entire `result` array, the algorithm becomes **O(N²)**.
+
+---
+
+### How it Works
+
+1. Create an empty array `result`.
+2. Traverse every element of the input array.
+3. Compare the current element with every element already present in `result`.
+4. If a match is found, it is a duplicate, so skip it.
+5. If no match is found after checking the entire `result` array, append it to `result`.
+6. Continue until all elements are processed.
+
+---
+
+### Code
+
+```cpp
+vector<int> removeDuplicates(vector<int>& nums) {
+
+    vector<int> result;
+
+    for(int i = 0; i < nums.size(); i++) {
+
+        bool found = false;
+
+        for(int j = 0; j < result.size(); j++) {
+
+            if(result[j] == nums[i]) {
+
+                found = true;
+                break;
+
+            }
+
+        }
+
+        if(!found)
+            result.push_back(nums[i]);
+
+    }
+
+    return result;
+}
+```
+
+---
+
+### Time Complexity
+
+**O(N²)**
+
+For every element in the original array (`N` iterations), we may scan the entire `result` array (up to `N` elements in the worst case when all elements are unique).
+
+Worst-case comparisons:
+
+```text
+0 + 1 + 2 + ... + (N-1)
+
+= N(N-1)/2
+
+≈ O(N²)
+```
+
+---
+
+### Space Complexity
+
+**O(N)**
+
+In the worst case, when all elements are unique, the `result` array stores all `N` elements.
+
+
 # 7. BRUTE FORCE
 
 ## Case 1 : Array NOT Sorted
