@@ -605,6 +605,432 @@ public:
 
 ---
 
+# ALTERNATIVE APPROACH (SPACE OPTIMIZED)
+
+## When to Think of This
+
+If:
+
+- The array **can be modified**, and
+- **Extra space should be minimized**
+
+then instead of hashing, we can:
+
+> **Sort the array and use Two Pointers.**
+
+This reduces the extra space from **O(n)** to **O(1)** (assuming in-place sorting), but increases the time complexity to **O(n log n)** due to sorting.
+
+---
+
+## CORE IDEA
+
+After sorting:
+
+- The smallest element is on the left.
+- The largest element is on the right.
+
+Maintain two pointers:
+
+```cpp
+left = 0;
+right = n - 1;
+```
+
+At every step:
+
+```cpp
+sum = arr[left] + arr[right];
+```
+
+- If `sum == target` → Pair found.
+- If `sum < target` → Move `left++` to increase the sum.
+- If `sum > target` → Move `right--` to decrease the sum.
+
+Because the array is sorted, every pointer movement eliminates impossible pairs.
+
+---
+
+## ALGORITHM
+
+1. Sort the array.
+2. Initialize:
+
+```cpp
+left = 0;
+right = n - 1;
+```
+
+3. While `left < right`:
+
+   - Compute the current sum.
+   - If equal to target → return `true`.
+   - If smaller → move `left`.
+   - If larger → move `right`.
+
+4. If traversal finishes → return `false`.
+
+---
+
+## DRY RUN
+
+```text
+arr = [0,-1,2,-3,1]
+
+Sort
+
+[-3,-1,0,1,2]
+
+target = -2
+
+left = 0
+right = 4
+```
+
+### Iteration 1
+
+```text
+Current Pair = (-3, 2)
+
+Sum = -1
+
+Too large
+
+Move right--
+```
+
+---
+
+### Iteration 2
+
+```text
+Current Pair = (-3, 1)
+
+Sum = -2
+
+Found
+
+Return true
+```
+
+---
+
+## WHY POINTER MOVEMENT WORKS
+
+Suppose:
+
+```text
+1 3 5 7 9
+L       R
+
+target = 12
+```
+
+Current sum:
+
+```text
+1 + 9 = 10
+```
+
+The sum is too small.
+
+Moving the right pointer left would only decrease the sum further.
+
+The only way to increase the sum is:
+
+```cpp
+left++;
+```
+
+Similarly, if the current sum is larger than the target,
+
+the only way to decrease it is:
+
+```cpp
+right--;
+```
+
+Sorting guarantees these decisions never skip a valid answer.
+
+---
+
+## CLEAN C++ CODE
+
+```cpp
+bool twoSum(vector<int>& arr, int target) {
+
+    sort(arr.begin(), arr.end());
+
+    int left = 0;
+    int right = arr.size() - 1;
+
+    while(left < right){
+
+        int sum = arr[left] + arr[right];
+
+        if(sum == target)
+            return true;
+
+        if(sum < target)
+            left++;
+        else
+            right--;
+    }
+
+    return false;
+}
+```
+
+---
+
+## TIME COMPLEXITY
+
+### Brute Force
+
+```text
+O(n²)
+```
+
+**Reason:**
+
+Two nested loops check every possible pair.
+
+---
+
+### Hashing (Optimal Time)
+
+For every element:
+
+- Hash Set lookup → **O(1)** average
+- Hash Set insertion → **O(1)** average
+
+Overall:
+
+```text
+O(n)
+```
+
+**Reason:**
+
+One lookup and one insertion are performed for each element.
+
+---
+
+### Sorting + Two Pointers (Space Optimized)
+
+Sorting:
+
+```text
+O(n log n)
+```
+
+Two Pointer Traversal:
+
+```text
+O(n)
+```
+
+Overall:
+
+```text
+O(n log n)
+```
+
+**Reason:**
+
+Sorting dominates the overall complexity.
+
+---
+
+## SPACE COMPLEXITY
+
+### Brute Force
+
+```text
+O(1)
+```
+
+---
+
+### Hashing
+
+```text
+O(n)
+```
+
+**Reason:**
+
+The Hash Set may store every element.
+
+---
+
+### Sorting + Two Pointers
+
+```text
+O(1)
+```
+
+**Reason:**
+
+Apart from a few variables, no additional data structure is used (assuming in-place sorting).
+
+---
+
+## COMMON MISTAKES
+
+### 5. Using Two Pointers on an Unsorted Array
+
+**Wrong:**
+
+Applying two pointers directly on an unsorted array.
+
+Two pointers only work because sorting provides an ordering.
+
+Without sorting, moving either pointer gives no guarantee about how the sum changes.
+
+Always:
+
+> **Sort First → Then Apply Two Pointers**
+
+---
+
+## WHEN TO USE WHICH?
+
+| Approach | Time | Space | Use When |
+|----------|------|-------|----------|
+| Brute Force | O(n²) | O(1) | Starting point in interviews |
+| Hash Set | **O(n)** | O(n) | Best runtime (Optimal) |
+| Sort + Two Pointers | O(n log n) | **O(1)** | Memory is limited and modifying the array is allowed |
+
+---
+
+## INTERVIEW FLOW
+
+### Step 1
+
+Start with the brute force approach.
+
+```text
+Time = O(n²)
+
+Space = O(1)
+```
+
+---
+
+### Step 2
+
+Observation:
+
+For every element, only one value can complete the target.
+
+```text
+needed = target - current
+```
+
+---
+
+### Step 3
+
+Use a Hash Set for average **O(1)** lookup.
+
+For every element:
+
+- Compute complement.
+- Check Hash Set.
+- Insert current element.
+
+```text
+Time = O(n)
+
+Space = O(n)
+```
+
+---
+
+### Step 4 (Bonus Discussion)
+
+If modifying the array is allowed and minimizing extra space is more important than runtime,
+
+sort the array and use Two Pointers.
+
+```text
+Time = O(n log n)
+
+Space = O(1)
+```
+
+---
+
+## PATTERN RECOGNITION
+
+Think of **Hashing (Complement Lookup)** when you need the **fastest runtime**.
+
+Think of **Sorting + Two Pointers** when:
+
+- The array can be sorted.
+- Extra space should be minimized.
+- The problem asks whether a pair exists or asks for the pair values (not necessarily the original indices).
+
+---
+
+# EASY-TO-REMEMBER SUMMARY
+
+## Pattern 1 (Fastest)
+
+**Hashing + Complement Lookup**
+
+Formula:
+
+```cpp
+needed = target - current;
+```
+
+Time:
+
+```text
+O(n)
+```
+
+Space:
+
+```text
+O(n)
+```
+
+Memory Trick:
+
+> **Fix one number → Compute what you need → Ask the Hash Set if you've already seen it.**
+
+---
+
+## Pattern 2 (Least Extra Space)
+
+**Sorting + Two Pointers**
+
+Steps:
+
+1. Sort the array.
+2. Place one pointer at each end.
+3. Compare the sum with the target.
+4. Move the left pointer to increase the sum.
+5. Move the right pointer to decrease the sum.
+
+Time:
+
+```text
+O(n log n)
+```
+
+Space:
+
+```text
+O(1)
+```
+
+Memory Trick:
+
+> **Sort → Check the two ends → If the sum is too small, move left. If it's too large, move right.**
+
 # INTUITION BEHIND EVERY IMPORTANT LINE
 
 ```cpp
