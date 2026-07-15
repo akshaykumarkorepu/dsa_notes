@@ -1,24 +1,45 @@
 
+# TWO SUM
 
-## Question: Two Sum - Pair with Given Sum
-
-### PATTERN: Hashing (Complement Lookup)
-→ **Trigger:** "when I see pair/two numbers whose sum equals a target and only existence or indices are required"
+## PATTERN: Hashing (Complement Lookup) + Sorting & Two Pointers
+→ **Trigger:** "when I see *find/check whether a pair sums to a target* in an unsorted array."
 
 ---
 
-### BRUTE FORCE
-→ **Idea:** Check every possible pair using two nested loops and return true if any pair sums to the target.
+## BRUTE FORCE
+→ **Idea:** Check every possible pair using two nested loops.
+
+```cpp
+for(int i=0;i<n;i++)
+    for(int j=i+1;j<n;j++)
+        if(arr[i]+arr[j]==target)
+            return true;
+```
+
 → **TC / SC:** **O(n²)** / **O(1)**
 
 ---
 
-### OPTIMAL
-→ **First instinct:** "I immediately compute the complement (`target - current`) and check whether I've already seen it using a Hash Set."
+## OPTIMAL (Fastest Runtime – Hashing)
 
-→ **Core idea:** Traverse the array once while maintaining an `unordered_set<int> st` of previously seen elements. For every `num`, compute `needed = target - num`. If `needed` exists in `st`, a valid pair is found. Otherwise, insert `num` into the set and continue.
+→ **First instinct:** "I immediately compute the complement (`target - current`) and check if I've already seen it."
 
-**Crucial Snippets:**
+→ **Core idea:**
+
+Maintain an `unordered_set` containing all previously seen numbers.
+
+For every element:
+
+- Compute the required complement.
+- If it already exists in the set, a valid pair is found.
+- Otherwise, insert the current element and continue.
+
+State maintained:
+
+- `unordered_set<int> st` → stores previously seen numbers.
+- `needed = target - num`
+
+**Key Snippets**
 
 ```cpp
 int needed = target - num;
@@ -33,20 +54,82 @@ if(st.find(needed) != st.end())
 st.insert(num);
 ```
 
-→ **TC / SC:** **O(n)** / **O(n)**
+→ **TC / SC:** **O(n)** average / **O(n)**
 
 ---
 
-### WATCH OUT FOR
-→ **Always check the complement before inserting the current element**, otherwise you may incorrectly use the same element twice (e.g., `[5]`, target = `10`).
+## ALTERNATIVE (Space Optimized – Sorting + Two Pointers)
+
+→ **First instinct:** "If modifying the array is allowed, sort it and search from both ends."
+
+→ **Core idea:**
+
+Sort the array first.
+
+Maintain two pointers:
+
+- `left` → smallest element
+- `right` → largest element
+
+At every step:
+
+- If current sum equals target → found.
+- If sum is smaller → move `left++` to increase the sum.
+- If sum is larger → move `right--` to decrease the sum.
+
+State maintained:
+
+- `left`
+- `right`
+- `sum`
+
+**Key Snippets**
+
+```cpp
+sort(arr.begin(), arr.end());
+```
+
+```cpp
+int left = 0;
+int right = n - 1;
+```
+
+```cpp
+int sum = arr[left] + arr[right];
+```
+
+```cpp
+if(sum == target)
+    return true;
+else if(sum < target)
+    left++;
+else
+    right--;
+```
+
+→ **TC / SC:** **O(n log n)** / **O(1)** *(assuming in-place sorting)*
 
 ---
 
-### INTERVIEW FLOW (what I say out loud, in order)
+## WATCH OUT FOR
 
-1. Brute force checks every pair using two nested loops → **O(n²)**.
-2. Observation: for every element, I only need its complement (`target - current`).
-3. Store previously seen elements in a Hash Set for **O(1)** average lookup.
-4. For each element, check if the complement exists; if yes, return true; otherwise insert the current element.
-5. Single traversal gives **O(n)** time with **O(n)** extra space.
+**Hashing:** Always **check before inserting**, otherwise the same element may be used twice.
+
+```cpp
+// Correct
+if(st.count(target-num))
+    return true;
+
+st.insert(num);
+```
+
+---
+
+## INTERVIEW FLOW (what I say out loud)
+
+1. Brute force checks every pair in **O(n²)**.
+2. Observation: for every number, I only need its complement.
+3. Use a Hash Set for **O(1)** average lookup, giving **O(n)** time.
+4. Mention the alternative: sort + two pointers if **O(1)** extra space is preferred.
+5. Check before inserting in the Hash Set to avoid using the same element twice.
 ````
