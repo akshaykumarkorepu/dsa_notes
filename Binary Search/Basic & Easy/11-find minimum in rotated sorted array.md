@@ -271,6 +271,132 @@ This duplicate case **does NOT apply** to the current problem.
 
 ---
 
+## Small Example (Duplicate Case)
+
+Example
+
+```text
+arr = [2,2,2,0,1,2]
+```
+
+Initial
+
+```text
+2 2 2 0 1 2
+L     M     H
+```
+
+```
+arr[mid] = 2
+arr[high] = 2
+```
+
+Here,
+
+```
+arr[mid] == arr[high]
+```
+
+### Can we decide which half contains the minimum?
+
+No.
+
+Why?
+
+Because both halves contain the value `2`.
+
+```text
+Left Half           Right Half
+
+2 2 2 | 0 1 2
+      ↑       ↑
+     2 == 2
+```
+
+The minimum **could be on either side**.
+
+So unlike the distinct-elements case, we **cannot** decide whether to go left or right.
+
+The safest option is to shrink the search space by removing one duplicate.
+
+```cpp
+high--;
+```
+
+Now the search space becomes
+
+```text
+2 2 2 0 1
+L     M   H
+```
+
+We have only removed one duplicate value.
+
+If that duplicate wasn't the minimum, we haven't lost anything.
+
+If it was equal to the minimum, there is still another copy remaining in the array.
+
+So the answer is still safe.
+
+Hence, for duplicate arrays:
+
+```cpp
+if(arr[mid] > arr[high])
+    low = mid + 1;
+
+else if(arr[mid] < arr[high])
+    high = mid;
+
+else
+    high--;
+```
+
+### Why does the complexity become O(N)?
+
+Consider
+
+```text
+2 2 2 2 2 2 2
+```
+
+Every iteration,
+
+```
+arr[mid] == arr[high]
+```
+
+so we only do
+
+```cpp
+high--;
+```
+
+Instead of eliminating **half** of the array, we eliminate **only one element** each time.
+
+```text
+N
+
+N-1
+
+N-2
+
+N-3
+```
+
+Therefore, in the **worst case**, the time complexity becomes
+
+```
+O(N)
+```
+
+instead of
+
+```
+O(log N)
+```
+
+-------
+
 # BRUTE FORCE:
 
 ## Idea
