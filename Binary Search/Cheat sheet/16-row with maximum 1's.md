@@ -10,20 +10,30 @@
 ### BRUTE FORCE
 → **Idea:** Traverse every element, count the number of 1s in each row, and keep track of the row with the maximum count.
 
-**Key Snippet**
+**Cheat Code Snippet**
 
 ```cpp
-int count = 0;
+for(each row){
 
-for(int j = 0; j < m; j++){
-    if(arr[i][j] == 1)
-        count++;
-}
+    count = 0;
 
-if(count > maxOnes){
-    maxOnes = count;
-    ans = i;
+    for(each col)
+        if(arr[i][j] == 1)
+            count++;
+
+    if(count > maxOnes){
+        maxOnes = count;
+        ans = i;
+    }
 }
+```
+
+**Remember**
+
+```
+Count every 1
+      ↓
+Keep maximum count
 ```
 
 → **TC / SC:** `O(N × M)` / `O(1)`
@@ -34,42 +44,91 @@ if(count > maxOnes){
 
 → **First instinct:** "I immediately Binary Search every row to find the first occurrence of 1."
 
-→ **Core idea:** Since every row is sorted, Binary Search each row to find the leftmost `1` (`firstOne`). Compute the number of ones as `m - firstOne` (or `0` if no `1` exists). Maintain `maxOnes` and `ans`, updating them only when the current row has strictly more ones.
+→ **Core idea:** Since every row is sorted, Binary Search each row to find the leftmost `1`. Compute the number of ones as `m - firstOne`. Maintain `maxOnes` and `ans`, updating them only if the current row has more ones.
 
-**Key Snippets**
-
-**Find First 1**
+### Cheat Code Snippet 1 — Binary Search
 
 ```cpp
-int firstOne = -1;
-
 while(low <= high){
-
-    int mid = low + (high - low)/2;
 
     if(arr[i][mid] == 1){
         firstOne = mid;
-        high = mid - 1;
+        high = mid - 1;   // go left
     }
     else{
-        low = mid + 1;
+        low = mid + 1;    // go right
     }
 }
 ```
 
-**Count Ones**
+**Memory**
 
-```cpp
-int ones = (firstOne == -1) ? 0 : m - firstOne;
+```
+Found 1
+ ↓
+Store Answer
+ ↓
+Move LEFT
 ```
 
-**Update Answer**
+---
+
+### Cheat Code Snippet 2 — Count Ones
+
+```cpp
+ones = (firstOne == -1) ? 0 : m - firstOne;
+```
+
+**Memory**
+
+```
+Ones = Columns - First 1 Position
+```
+
+---
+
+### Cheat Code Snippet 3 — Update Answer
 
 ```cpp
 if(ones > maxOnes){
+
     maxOnes = ones;
     ans = i;
 }
+```
+
+**Memory**
+
+```
+STRICTLY GREATER
+
+>
+
+Never >=
+```
+
+---
+
+### Entire Flow (10-second Recall)
+
+```text
+For every row
+
+        ↓
+
+Binary Search First 1
+
+        ↓
+
+ones = m - firstOne
+
+        ↓
+
+if(ones > maxOnes)
+
+        ↓
+
+Update Answer
 ```
 
 → **TC / SC:** `O(N log M)` / `O(1)`
@@ -78,15 +137,15 @@ if(ones > maxOnes){
 
 ### WATCH OUT FOR
 
-→ Using `>=` instead of `>` while updating the answer. The problem asks for the **first** row with the maximum number of 1s.
+→ Using `>=` instead of `>`. This changes the answer from the **first** row with maximum 1s to the **last** row.
 
 ---
 
 ### INTERVIEW FLOW (what I say out loud, in order)
 
-1. Every row is sorted, so I don't need to count every element.
-2. I'll Binary Search each row to find the first occurrence of `1`.
-3. Number of ones is `m - firstOneIndex`.
-4. Maintain `maxOnes` and the corresponding row index.
-5. Update only when `ones > maxOnes` to preserve the first row in case of ties.
+1. Every row is sorted, so counting isn't necessary.
+2. I'll Binary Search each row to find the first `1`.
+3. Ones in that row = `m - firstOneIndex`.
+4. Maintain `maxOnes` and `ans`.
+5. Update only when `ones > maxOnes` to keep the first row.
 ````
